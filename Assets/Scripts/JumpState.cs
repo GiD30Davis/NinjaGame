@@ -3,7 +3,7 @@ using UnityEngine;
 public class JumpState : PlayerBaseState
 {
     private float jumpForce = 7.5f;
-    private float wallJumpHorizontalForce = 5f;
+    private float wallJumpHorizontalForce = 6f;
     private float enterTime;
     private bool hasJumped = false;
     private bool isWallJump = false;
@@ -24,7 +24,7 @@ public class JumpState : PlayerBaseState
 
         // Play jump animation
         if (stateMachine.Animator != null)
-            stateMachine.Animator.Play("JumpAnimation");
+            stateMachine.Animator.Play("Jump");
         Debug.Log($"[JumpState] Entering Jump State at {enterTime:F2}s");
 
         // If grounded, set jumps to MaxJumps - 1 (so the ground jump counts as the first jump)
