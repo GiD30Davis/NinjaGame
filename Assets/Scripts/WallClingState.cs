@@ -12,11 +12,11 @@ public class WallClingState : PlayerBaseState
     {
         enterTime = Time.time;
         jumpHeldOnEnter = stateMachine.InputReader.IsJumpPressed();
-        Debug.Log($"[WallClingState] Entering Wall Cling State at {enterTime:F2}s");
+        Debug.Log($"[Cling] Entering Wall Cling State at {enterTime:F2}s");
 
         // Optional: Play wall cling animation
-        // if (stateMachine.Animator != null)
-        //     stateMachine.Animator.Play("WallClingAnimation"); // Replace with your animation name
+         if (stateMachine.Animator != null)
+            stateMachine.Animator.Play("Cling"); // Replace with your animation name
 
         // Reduce initial vertical velocity slightly to make the cling feel better
         if (stateMachine.RB != null)
