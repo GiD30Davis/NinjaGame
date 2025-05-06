@@ -162,7 +162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f7e3a1bac9704046921de317e4b4e13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelFileName: Level-1-1.png
+  levelFileName: pixilart-drawing.png
   colorToPrefab:
   - color:
       serializedVersion: 2
@@ -170,15 +170,15 @@ MonoBehaviour:
     prefab: {fileID: 116094, guid: 6cd739852113823489a8311c54156ac9, type: 3}
   - color:
       serializedVersion: 2
-      rgba: 4278255615
+      rgba: 4278514431
     prefab: {fileID: 193220, guid: 4452304ede9b69b4db8ef1d677b45639, type: 3}
   - color:
       serializedVersion: 2
-      rgba: 4278255360
+      rgba: 4280149672
     prefab: {fileID: 180128, guid: f0187a43815b60745a3841ed349ab2a2, type: 3}
   - color:
       serializedVersion: 2
-      rgba: 4294901760
+      rgba: 4294143309
     prefab: {fileID: 173084, guid: 4e8b994a281a3ff4fa3102e3a4c3fea9, type: 3}
   - color:
       serializedVersion: 2
