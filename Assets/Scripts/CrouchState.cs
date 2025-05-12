@@ -1,115 +1,81 @@
 using UnityEngine;
 
-public class CrouchState : PlayerBaseState
+public class CrouchState : PlayerBaseState 
 {
-    private float enterTime;
-    private float crouchMoveSpeed;
+    private Transform playerTransform; // Reference to the player's transform
+    public float attractionForce = 10f; // Strength of the attraction
+    public float magnetRange = 10f; // Range at which objects are attracted
+    public LayerMask targetLayer; // Layer to filter which objects are attracted by the magnet
 
-    public CrouchState(PlayerStateMachine stateMachine) : base(stateMachine)
-    {
-        // Calculate actual crouch speed based on multipliers
-        // Walk speed is 0.5 * MoveSpeed, Crouch is half of Walk speed (0.25 * MoveSpeed)
-        crouchMoveSpeed = stateMachine.MoveSpeed * stateMachine.CrouchSpeedMultiplier;
-    }
-
+    
     public override void Enter()
-    {
-        enterTime = Time.time;
-        stateMachine.SetColliderCrouching();
+    { GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject != null)
+        {
+            this.playerTransform = playerObject.transform;
+        }
+        else
+        {
+            Debug.LogError("[CrouchState] No GameObject with the 'Player' tag found.");
+        }
         // Play crouch animation
-        if (stateMachine.Animator != null)
-            stateMachine.Animator.Play("CrouchAnimation"); // Replace with actual animation name
-        Debug.Log($"[CrouchState] Entering Crouch State at {enterTime:F2}s");
+        if (playerTransform != null)
+        {
+            // Assuming you have an Animator component on the player
+            Animator animator = playerTransform.GetComponent<Animator>();
+            if (animator != null)
+            {
+                animator.Play("Crouch");
+            }
+        }
+        Debug.Log("[CrouchState] Entering Crouch State");
     }
 
     public override void Tick(float deltaTime)
     {
-        // --- NEW: Check for loss of ground or wall contact ---
-        if (!stateMachine.IsGrounded())
+        AttractObjects();
+    }
+
+    private void AttractObjects()
+    {
+        // Find all colliders within the range of the magnet
+        if (playerTransform == null)
         {
-            if (stateMachine.IsTouchingWall() && stateMachine.RB.linearVelocity.y <= 0)
-            {
-                stateMachine.SwitchState(stateMachine.WallClingState);
-            }
-            else
-            {
-                stateMachine.SwitchState(stateMachine.FallState);
-            }
+            Debug.LogWarning("[CrouchState] playerTransform is null. Skipping AttractObjects.");
             return;
         }
 
-        // Check for Shoot input first
-        if (stateMachine.InputReader.IsShootPressed()) // Use InputReader property
-        {
-            stateMachine.SwitchState(stateMachine.ShootState);
-            return; // Exit early
-        }
+        Collider[] colliders = Physics.OverlapSphere(playerTransform.position, magnetRange, targetLayer);
 
-        // --- Check for Exit Conditions ---
-
-        // 1. Crouch key released?
-        if (!stateMachine.InputReader.IsCrouchHeld()) // Use InputReader property
+        foreach (Collider col in colliders)
         {
-            // Check if space to stand up
-            if (stateMachine.CanStandUp())
+            Rigidbody rb = col.GetComponent<Rigidbody>();
+            if (rb != null)
             {
-                // Determine next state based on input
-                Vector2 moveInputCheck = stateMachine.InputReader.GetMovementInput(); // Use InputReader property
-                if (moveInputCheck == Vector2.zero)
-                {
-                    stateMachine.SwitchState(stateMachine.IdleState);
-                }
-                else
-                {
-                    if (stateMachine.InputReader.IsRunPressed()) // Use InputReader property
-                        stateMachine.SwitchState(stateMachine.RunState);
-                    else
-                        stateMachine.SwitchState(stateMachine.WalkState);
-                }
-                return; // Exit after state switch
+                // Calculate direction towards the magnet
+                Vector3 direction = (playerTransform.position - col.transform.position).normalized;
+
+                // Apply force towards the magnet
+                rb.AddForce(direction * attractionForce * Time.deltaTime, ForceMode.VelocityChange);
             }
-            else
-            {
-                // Cannot stand up, remain crouching (play bump sound/effect?)
-                Debug.Log("[CrouchState] Cannot stand up, obstacle detected.");
-            }
-        }
-
-        // 2. No longer grounded? (Handled above)
-
-        // --- Apply Crouch Movement ---
-        Vector2 moveInput = stateMachine.InputReader.GetMovementInput(); // Use InputReader property
-        // Apply movement using the calculated crouch speed
-        stateMachine.RB.linearVelocity = moveInput * crouchMoveSpeed;
-
-        // Update animation blend tree if needed
-        if (stateMachine.Animator != null && moveInput != Vector2.zero)
-        {
-            stateMachine.Animator.SetFloat("Horizontal", moveInput.x);
-            // stateMachine.Animator.SetFloat("Vertical", moveInput.y); // If needed
         }
     }
 
     public override void Exit()
     {
-        // Only restore collider if we could actually stand up (handled in Tick)
-        // Ensure collider is restored if exiting for other reasons (e.g., death state)
-        // We rely on the Tick logic ensuring CanStandUp before switching state.
-         if (stateMachine.CanStandUp()) // Double check on exit
-         {
-            stateMachine.SetColliderStanding();
-         }
-         else
-         {
-            // This case should ideally not happen if Tick logic is correct.
-            // If it does, we might be stuck crouching.
-            Debug.LogError("[CrouchState] Exiting state but cannot stand up!");
-         }
+        if (playerTransform == null)
+        {
+            Debug.LogWarning("[CrouchState] playerTransform is null. Cannot draw Gizmos.");
+            return;
+        }
 
-        // Stop crouch animation if needed
-        // if (stateMachine.Animator != null)
-        //     stateMachine.Animator.StopPlayback(); // Or transition to appropriate animation
-
-        Debug.Log($"[CrouchState] Exiting Crouch State after {Time.time - enterTime:F2}s");
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(playerTransform.position, magnetRange);
+        // Visualize the magnet range in the editor
+        if (playerTransform != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(playerTransform.position, magnetRange);
+        }
     }
 }

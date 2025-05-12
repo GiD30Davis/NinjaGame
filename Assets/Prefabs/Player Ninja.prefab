@@ -122,6 +122,7 @@ GameObject:
   - component: {fileID: 8447977035555912616}
   - component: {fileID: 1779346489392483852}
   - component: {fileID: 1914377576693117475}
+  - component: {fileID: 7616861247312758571}
   m_Layer: 0
   m_Name: Player Ninja
   m_TagString: Player
@@ -160,7 +161,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <MoveSpeed>k__BackingField: 5
   <WallJumpForce>k__BackingField: 7.5
-  <MaxJumps>k__BackingField: 2
+  <MaxJumps>k__BackingField: 4
   playerCollider: {fileID: 1779346489392483852}
   standingColliderSize: {x: 1, y: 2}
   standingColliderOffset: {x: 0, y: 0}
@@ -236,6 +237,42 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!58 &7616861247312758571
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180128}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 2
 --- !u!1 &6734205709435017409
 GameObject:
   m_ObjectHideFlags: 0

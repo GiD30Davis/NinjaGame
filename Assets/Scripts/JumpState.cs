@@ -10,12 +10,14 @@ public class JumpState : PlayerBaseState
 
     public JumpState(PlayerStateMachine stateMachine) : base(stateMachine)
     {
+        // Ensure required fields or properties are initialized if needed
+        Debug.Log("[JumpState] Constructor called.");
     }
 
     public override void Enter()
     {
         enterTime = Time.time;
-        hasJumped = false;
+        // Removed hasJumped assignment
         isWallJump = false;
 
         // --- Start coyote time (grounded grace period) ---
@@ -40,7 +42,7 @@ public class JumpState : PlayerBaseState
                 {
                     stateMachine.RB.linearVelocity = Vector2.zero;
                     stateMachine.RB.AddForce(new Vector2(wallJumpDir.x * wallJumpHorizontalForce, stateMachine.WallJumpForce), ForceMode2D.Impulse);
-                    hasJumped = true;
+                    // Removed hasJumped assignment
                     isWallJump = true;
                     stateMachine.JumpsRemaining = Mathf.Max(0, stateMachine.JumpsRemaining - 1);
                     Debug.Log("[JumpState] Wall Jump performed. Jumps left: " + stateMachine.JumpsRemaining);
