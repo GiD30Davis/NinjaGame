@@ -149,7 +149,7 @@ public class PlayerStateMachine : MonoBehaviour
             jumpGroundedGraceTimer -= Time.deltaTime;
 
         // Track grounded state for jump reset logic
-        bool isGroundedNow = IsGrounded();
+        bool isGroundedNow = groundCheckPoint != null && IsGrounded();
         if (!wasGroundedLastFrame && isGroundedNow)
         {
             // Landed this frame, reset jumps

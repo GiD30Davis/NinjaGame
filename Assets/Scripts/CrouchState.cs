@@ -7,13 +7,16 @@ public interface ICrouchState
     void Tick(global::System.Single deltaTime);
 // Removed duplicate Exit method
 }
+
 public class CrouchState : PlayerBaseState, ICrouchState
 {
     public CrouchState(PlayerStateMachine stateMachine) : base(stateMachine) { }
     private Transform playerTransform; // Reference to the player's transform
-    public float attractionForce = 10f; // Strength of the attraction
+    public float attractionForce = 50f; // Strength of the attraction
     public float magnetRange = 10f; // Range at which objects are attracted
-    public LayerMask targetLayer; // Layer to filter which objects are attracted by the magnet
+    public LayerMask targetLayer = ~0; // Default to all layers being included
+    public float attractionTimer;
+    
 
     public override void Exit()
     {
@@ -22,8 +25,11 @@ public class CrouchState : PlayerBaseState, ICrouchState
         // Optionally, reset or stop any crouch-specific behaviors here
     }
 
+    /// <summary>
     public override void Enter()
     {
+        // Simulate being grounded when entering crouch state
+        
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
         Debug.Log($"[CrouchState] Player Object: {playerObject}");
         if (playerObject != null)
@@ -34,6 +40,7 @@ public class CrouchState : PlayerBaseState, ICrouchState
         {
             Debug.LogError("[CrouchState] No GameObject with the 'Player' tag found.");
         }
+
         // Play crouch animation
         if (playerTransform != null)
         {
@@ -44,15 +51,24 @@ public class CrouchState : PlayerBaseState, ICrouchState
                 animator.Play("Crouch");
             }
         }
+
         Debug.Log("[CrouchState] Entering Crouch State");
     }
-
     public override void Tick(float deltaTime)
     {
+        if (playerTransform == null)
+        {
+            Debug.LogWarning("[CrouchState] playerTransform is null. Skipping AttractObjects.");
+            return;
+        }
+
+        
         AttractObjects();
 
+        attractionTimer -= deltaTime;
+
         // Check for exit condition (e.g., pressing a key to leave crouch state)
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             stateMachine.SwitchState(stateMachine.IdleState); // Transition back to the previous state
         }
@@ -60,33 +76,29 @@ public class CrouchState : PlayerBaseState, ICrouchState
 
     private void AttractObjects()
     {
-        if (playerTransform == null)
-        {
-            Debug.LogWarning("[CrouchState] playerTransform is null. Skipping AttractObjects.");
-            return;
-        }
-    
         // Find all colliders within the range of the magnet
-        Collider[] colliders = Physics.OverlapSphere(playerTransform.position, magnetRange);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(stateMachine.transform.position, magnetRange, targetLayer);
     
-        if (colliders.Length == 10000000)
+        if (colliders.Length == 0)
         {
             Debug.LogWarning("[CrouchState] No objects found within magnet range.");
             return;
         }
     
-        foreach (Collider col in colliders)
+        foreach (Collider2D col in colliders)
         {
-            if (col.CompareTag("Metal")) // Check if the object has the tag "Metal"
+            Rigidbody2D rb = col.GetComponent<Rigidbody2D>();
+            if (rb != null)
             {
-                Rigidbody rb = col.GetComponent<Rigidbody>();
-                if (rb != null)
-                {
-                    // Apply attraction force
-                    Vector3 direction = (playerTransform.position - rb.position).normalized;
-                    rb.AddForce(direction * attractionForce);
-                }
+                // Calculate direction
+                Vector2 playerPosition = new Vector2(stateMachine.transform.position.x, stateMachine.transform.position.y);
+                Vector2 objectPosition = rb.position;
+                Vector2 direction = (playerPosition - objectPosition).normalized;
+
+                // Adjust velocity
+                Vector2 velocityAdjustment = direction * attractionForce * Time.deltaTime;
+                rb.linearVelocity += velocityAdjustment;
             }
         }
     }
-}
+ }
