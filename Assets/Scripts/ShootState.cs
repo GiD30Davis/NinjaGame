@@ -16,9 +16,11 @@ public class ShootState : PlayerBaseState
 
     public override void Tick(float deltaTime)
     {
+        // Logic for creating and handling a bullet prefab
+        
         // Logic during the shoot state (e.g., handle firing cooldown, check ammo)
+    
 
-        // Check for transitions out of the shoot state
         // Check for transitions out of the shoot state
         CheckSwitchStates(); // We'll keep this helper method for clarity
     }
@@ -27,7 +29,7 @@ public class ShootState : PlayerBaseState
     {
         // Logic when exiting the shoot state (e.g., stop animation)
         Debug.Log("Player exited Shoot State");
-         stateMachine.Animator.SetBool("IsShooting", false); // Example animation reset
+          // Example animation reset
     }
 
     // Helper method for transition checks (called from Tick)

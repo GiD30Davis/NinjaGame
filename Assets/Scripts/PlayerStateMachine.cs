@@ -22,12 +22,14 @@ public class PlayerStateMachine : MonoBehaviour
     private bool wasGroundedLastFrame = true;
 
     // --- Coyote time (grounded grace period) ---
+    
     private float jumpGroundedGraceTimer = 0f;
     private const float jumpGroundedGraceDuration = 0.10f; // 0.1 seconds of grace after jumping
     [field: SerializeField] public float MoveSpeed { get; private set; } = 5f; // Example speed
     [field: SerializeField] public float WallJumpForce { get; private set; } = 7.5f;
     [field: SerializeField] public int MaxJumps { get; private set; } = 2; // 1 = no double jump, 2 = double jump
     public int JumpsRemaining { get; set; }
+    
 
     [Header("Collider Settings")]
     [SerializeField] private CapsuleCollider2D playerCollider; // Assign in Inspector

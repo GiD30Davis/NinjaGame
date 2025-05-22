@@ -34,16 +34,15 @@ public class PlayerIdleState : PlayerBaseState
             return;
         }
 
-        // Check for Shoot input
-        if (stateMachine.InputReader.IsShootPressed()) // Use InputReader property
-        {
+        if (Input.GetMouseButtonDown(0)) // Detect left mouse button click
+        {Debug.Log($"[IdleState] Left mouse button clicked. IsGrounded: {stateMachine.IsGrounded()}");
             stateMachine.SwitchState(stateMachine.ShootState);
             return; // Exit early
         }
 
         // Check for Crouch input if grounded
         if (stateMachine.IsGrounded() && stateMachine.InputReader.IsCrouchHeld()) // Use InputReader property
-        {
+        { Debug.Log($"[IdleState] Crouch held. IsGrounded: {stateMachine.IsGrounded()}");
             stateMachine.SwitchState(stateMachine.CrouchState);
             return; // Exit early after state switch
         }
