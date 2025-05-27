@@ -20,9 +20,10 @@ public abstract class PlayerBaseState
 public class PlayerStateMachine : MonoBehaviour
 {
     private bool wasGroundedLastFrame = true;
+    public bool fly = false; // Example variable for flight state
 
     // --- Coyote time (grounded grace period) ---
-    
+
     private float jumpGroundedGraceTimer = 0f;
     private const float jumpGroundedGraceDuration = 0.10f; // 0.1 seconds of grace after jumping
     [field: SerializeField] public float MoveSpeed { get; private set; } = 5f; // Example speed
@@ -160,6 +161,35 @@ public class PlayerStateMachine : MonoBehaviour
         wasGroundedLastFrame = isGroundedNow;
 
         currentState?.Tick(Time.deltaTime);
+
+        if (GetMovementInput().x != 0f)
+        {
+            transform.localScale = new Vector3(
+                Mathf.Sign(GetMovementInput().x), // Flip based on horizontal Input
+                1f, // Keep vertical scale normal
+                1f // Keep z scale normal
+            );
+        }
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            fly = true;
+
+            Debug.Log("Fly");
+        }
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            fly = false;
+            Debug.Log("Grounded");
+            RB.gravityScale = 1f;
+        }
+        if (fly)
+        {
+            // If flying, disable gravity and allow free movement
+            RB.gravityScale = 0.5f;
+            RB.linearVelocity = new Vector2(GetMovementInput().x * MoveSpeed, GetMovementInput().y * MoveSpeed);
+        }
+        // Maintain vertical velocity
+        
     }
 
     public void SwitchState(PlayerBaseState newState)
@@ -177,6 +207,7 @@ public class PlayerStateMachine : MonoBehaviour
     {
         // Delegate to the InputReader instance
         return InputReader.GetMovementInput();
+        
     }
 
     public bool IsRunPressed()
