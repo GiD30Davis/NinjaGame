@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Metal
+  - Bullet
   layers:
   - Default
   - TransparentFX
