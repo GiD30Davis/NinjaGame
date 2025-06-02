@@ -82,7 +82,7 @@ public class WalkState : PlayerBaseState
         if (stateMachine.Animator != null)
         {
             stateMachine.Animator.SetFloat("Horizontal", moveInput.x);
-            stateMachine.Animator.SetFloat("Vertical", moveInput.y);
+            
         }
 
         // Debug: log duration in state
