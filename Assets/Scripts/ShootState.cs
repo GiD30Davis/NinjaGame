@@ -19,7 +19,7 @@ public class ShootState : PlayerBaseState
     {
         // Logic for creating and handling a bullet prefab
         
-        // Logic during the shoot state (e.g., handle firing cooldown, check ammo)
+       
     
 
         // Check for transitions out of the shoot state

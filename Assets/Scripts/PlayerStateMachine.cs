@@ -134,8 +134,8 @@ public class PlayerStateMachine : MonoBehaviour
         FallState = new FallState(this); // Initialize FallState
         stateRegistry[nameof(FallState)] = FallState; // Register FallState
 
-        // Initialize jumps
-        JumpsRemaining = MaxJumps;
+
+
     }
 
     private void Start()
